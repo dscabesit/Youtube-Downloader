@@ -21,7 +21,7 @@ def darkmode():
 is_paused = is_cancelled = False
 
 
-def download_video(url,filename):
+def download_media(url,filename,audioOnly=False):
     global is_paused, is_cancelled
     download_button['state'] = 'disabled'
     pause_button['state'] = 'normal'
@@ -29,7 +29,10 @@ def download_video(url,filename):
     try:
         progress['text'] = 'Connecting ...'
         yt = YouTube(url)
-        stream = yt.streams.first()
+        if(audioOnly):
+            stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
+        else:
+            stream = yt.streams.filter(subtype='mp4').first()
         filesize = stream.filesize
         with open(filename, 'wb') as f:
             is_paused = is_cancelled = False
@@ -61,7 +64,12 @@ def download_video(url,filename):
 def start_download():
     filename = askdirectory()
     filename = filename+'/sample.mp4'
-    threading.Thread(target=download_video, args=(url_entry.get(),filename), daemon=True).start()
+    threading.Thread(target=download_media, args=(url_entry.get(),filename), daemon=True).start()
+
+def start_audio_download():
+    filename = askdirectory()
+    filename = filename+'/sample.mp4'
+    threading.Thread(target=download_media, args=(url_entry.get(),filename,True), daemon=True).start()
 
 
 def toggle_download():
@@ -114,6 +122,10 @@ url_entry.focus()
 # Download Button
 download_button = Button(root, text='Download', width=10, command=start_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
 download_button.pack(side=TOP, pady=20)
+
+# Download Audio Button
+download_button = Button(root, text='Download Audio', width=14, command=start_audio_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+download_button.pack(side=TOP, pady=30)
 
 # Progress
 progress = Label(root)
