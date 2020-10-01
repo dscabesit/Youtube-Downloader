@@ -44,7 +44,7 @@ git clone https://github.com/dscabesit/Youtube-Downloader.git
 
 3. Install the Package: 
 ```sh
-pip install pytube3
+pip install -r requirements.txt
 ```
 
 4. At last, push in the command:
