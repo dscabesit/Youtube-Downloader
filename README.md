@@ -1,3 +1,13 @@
+# Awesome Hacktoberfest ![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)
+
+> [Hacktoberfest](https://hacktoberfest.digitalocean.com/) is a chance to level up your coding skills and get small goodies in reward.
+
+<br />
+<p align="center">
+  <a href="https://hacktoberfest.digitalocean.com/">
+    <img src="https://i.ibb.co/4FjRdbH/Logo-Sponsors-Light.png" alt="Logo">
+  </a>
+</p>
 
 <br />
 <p align="center">
