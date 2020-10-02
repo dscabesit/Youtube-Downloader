@@ -30,7 +30,6 @@ def download_media(url,filename,audioOnly=False):
         pause_button['state'] = 'normal'
         cancel_button['state'] = 'normal'
         try:
-            #progress['text'] = 'Connecting ...'
             yt = YouTube(url)
             if(audioOnly):
                 stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
