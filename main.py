@@ -1,5 +1,6 @@
 import threading
 from tkinter.filedialog import *
+from tkinter.ttk import Progressbar,Style
 from pytube import YouTube, request
 
 
@@ -29,7 +30,7 @@ def download_media(url,filename,audioOnly=False):
         pause_button['state'] = 'normal'
         cancel_button['state'] = 'normal'
         try:
-            progress['text'] = 'Connecting ...'
+            #progress['text'] = 'Connecting ...'
             yt = YouTube(url)
             if(audioOnly):
                 stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
@@ -42,7 +43,7 @@ def download_media(url,filename,audioOnly=False):
                 downloaded = 0
                 while True:
                     if is_cancelled:
-                        progress['text'] = 'Download cancelled'
+                        progressBar(-1)
                         break
                     if is_paused:
                         continue
@@ -50,10 +51,10 @@ def download_media(url,filename,audioOnly=False):
                     if chunk:
                         f.write(chunk)
                         downloaded += len(chunk)
-                        progress['text'] = f'Downloaded {downloaded} / {filesize}'
+                        percent = int(downloaded / filesize * 100)
+                        progressBar(percent)
                     else:
                         # no more data
-                        progress['text'] = 'Download completed'
                         break
             print('done')
         except Exception as e:
@@ -85,12 +86,29 @@ def cancel_download():
     global is_cancelled
     is_cancelled = True
 
+def progressBar(percent):
+    progress['value'] = percent
+    if(percent < 0):
+        style.configure('text.Horizontal.TProgressbar', text='Cancelled')
+    else:
+        style.configure('text.Horizontal.TProgressbar', text=f'{percent} %')    
+    root.update_idletasks()
 
 # gui
 root = Tk()
 root.title("Youtube Downloader")
 root.iconbitmap("main img/icon.ico")
 root.geometry("500x650")
+
+#custom style for progress bar
+style = Style()
+style.layout('text.Horizontal.TProgressbar', 
+             [('Horizontal.Progressbar.trough',
+               {'children': [('Horizontal.Progressbar.pbar',
+                              {'side': 'left', 'sticky': 'ns'})],
+                'sticky': 'nswe'}), 
+              ('Horizontal.Progressbar.label', {'sticky': ''})])
+style.configure('text.Horizontal.TProgressbar', text='0 %')
 
 # switch toggle:
 btnState = False
@@ -130,9 +148,9 @@ download_button.pack(side=TOP, pady=10)
 download_audio_button = Button(root, text='Download Audio', width=14, command=start_audio_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
 download_audio_button.pack(side=TOP, pady=10)
 
-# Progress
-progress = Label(root)
-progress.pack(side=TOP)
+# Progress bar
+progress = Progressbar(root, orient=HORIZONTAL, length = 100, style='text.Horizontal.TProgressbar', mode='determinate')
+progress.pack(side=TOP,anchor=CENTER, pady=10)
 
 # Pause Button
 pause_button = Button(root, text='Pause', width=10, command=toggle_download, state='disabled', font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
