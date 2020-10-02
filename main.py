@@ -21,47 +21,58 @@ def darkmode():
 is_paused = is_cancelled = False
 
 
-def download_video(url,filename):
-    global is_paused, is_cancelled
-    download_button['state'] = 'disabled'
-    pause_button['state'] = 'normal'
-    cancel_button['state'] = 'normal'
-    try:
-        progress['text'] = 'Connecting ...'
-        yt = YouTube(url)
-        stream = yt.streams.first()
-        filesize = stream.filesize
-        with open(filename, 'wb') as f:
-            is_paused = is_cancelled = False
-            stream = request.stream(stream.url)
-            downloaded = 0
-            while True:
-                if is_cancelled:
-                    progress['text'] = 'Download cancelled'
-                    break
-                if is_paused:
-                    continue
-                chunk = next(stream, None)
-                if chunk:
-                    f.write(chunk)
-                    downloaded += len(chunk)
-                    progress['text'] = f'Downloaded {downloaded} / {filesize}'
-                else:
-                    # no more data
-                    progress['text'] = 'Download completed'
-                    break
-        print('done')
-    except Exception as e:
-        print(e)
-    download_button['state'] = 'normal'
-    pause_button['state'] = 'disabled'
-    cancel_button['state'] = 'disabled'
+def download_media(url,filename,audioOnly=False):
+    if(url):
+        global is_paused, is_cancelled
+        download_button['state'] = 'disabled'
+        download_audio_button['state'] = 'disabled'
+        pause_button['state'] = 'normal'
+        cancel_button['state'] = 'normal'
+        try:
+            progress['text'] = 'Connecting ...'
+            yt = YouTube(url)
+            if(audioOnly):
+                stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
+            else:
+                stream = yt.streams.filter(subtype='mp4').first()
+            filesize = stream.filesize
+            with open(filename, 'wb') as f:
+                is_paused = is_cancelled = False
+                stream = request.stream(stream.url)
+                downloaded = 0
+                while True:
+                    if is_cancelled:
+                        progress['text'] = 'Download cancelled'
+                        break
+                    if is_paused:
+                        continue
+                    chunk = next(stream, None)
+                    if chunk:
+                        f.write(chunk)
+                        downloaded += len(chunk)
+                        progress['text'] = f'Downloaded {downloaded} / {filesize}'
+                    else:
+                        # no more data
+                        progress['text'] = 'Download completed'
+                        break
+            print('done')
+        except Exception as e:
+            print(e)
+        download_button['state'] = 'normal'
+        download_audio_button['state'] = 'normal'
+        pause_button['state'] = 'disabled'
+        cancel_button['state'] = 'disabled'
 
 
 def start_download():
     filename = askdirectory()
     filename = filename+'/sample.mp4'
-    threading.Thread(target=download_video, args=(url_entry.get(),filename), daemon=True).start()
+    threading.Thread(target=download_media, args=(url_entry.get(),filename), daemon=True).start()
+
+def start_audio_download():
+    filename = askdirectory()
+    filename = filename+'/sample.mp3'
+    threading.Thread(target=download_media, args=(url_entry.get(),filename,True), daemon=True).start()
 
 
 def toggle_download():
@@ -113,7 +124,11 @@ url_entry.focus()
 
 # Download Button
 download_button = Button(root, text='Download', width=10, command=start_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
-download_button.pack(side=TOP, pady=20)
+download_button.pack(side=TOP, pady=10)
+
+# Download Audio Button
+download_audio_button = Button(root, text='Download Audio', width=14, command=start_audio_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+download_audio_button.pack(side=TOP, pady=10)
 
 # Progress
 progress = Label(root)
@@ -121,10 +136,10 @@ progress.pack(side=TOP)
 
 # Pause Button
 pause_button = Button(root, text='Pause', width=10, command=toggle_download, state='disabled', font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
-pause_button.pack(side=TOP, pady=20)
+pause_button.pack(side=TOP, pady=10)
 
 # Cancel Button
 cancel_button = Button(root, text='Cancel', width=10, command=cancel_download, state='disabled', font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
-cancel_button.pack(side=TOP, pady=20)
+cancel_button.pack(side=TOP, pady=10)
 
 root.mainloop()

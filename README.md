@@ -39,7 +39,7 @@ Youtube Downloader is a Python Application that can be used to download Youtube 
 2. Clone the Repo by going to your local Git Client and pushing in the command: 
 
 ```sh
-git clone https://github.com/swapnilsparsh/YoutubeDownloader.git
+git clone https://github.com/dscabesit/Youtube-Downloader.git
 ```
 
 3. Install the Package: 
