@@ -123,11 +123,13 @@ url_entry.pack(side=TOP, fill=X, padx=10)
 url_entry.focus()
 
 # Download Button
-download_button = Button(root, text='Download', width=10, command=start_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+download_img = PhotoImage(file="btnimgs/Download.png")
+download_button = Button(root, image=download_img, command=start_download,borderwidth=0,bg=None)
 download_button.pack(side=TOP, pady=10)
 
 # Download Audio Button
-download_audio_button = Button(root, text='Download Audio', width=14, command=start_audio_download, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+download_audio_img = PhotoImage(file="btnimgs/Download_Audio.png")
+download_audio_button = Button(root, image=download_audio_img,command=start_audio_download,borderwidth=0,bg=None)
 download_audio_button.pack(side=TOP, pady=10)
 
 # Progress
@@ -135,11 +137,13 @@ progress = Label(root)
 progress.pack(side=TOP)
 
 # Pause Button
-pause_button = Button(root, text='Pause', width=10, command=toggle_download, state='disabled', font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+pause_img = PhotoImage(file="btnimgs/Pause.png")
+pause_button = Button(root, image=pause_img, command=toggle_download, state='disabled',bg=None,borderwidth=0)
 pause_button.pack(side=TOP, pady=10)
 
 # Cancel Button
-cancel_button = Button(root, text='Cancel', width=10, command=cancel_download, state='disabled', font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+cancel_img = PhotoImage(file="btnimgs/Cancel.png")
+cancel_button = Button(root, image=cancel_img, command=cancel_download, state='disabled',bg=None,borderwidth=0)
 cancel_button.pack(side=TOP, pady=10)
 
 root.mainloop()
