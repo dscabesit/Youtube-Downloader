@@ -33,8 +33,10 @@ def download_media(url,filename,audioOnly=False):
             yt = YouTube(url)
             if(audioOnly):
                 stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
+                filename = filename + '/' + yt.title + '.mp3'
             else:
                 stream = yt.streams.filter(subtype='mp4').first()
+                filename = filename + '/' + yt.title + '.mp4'
             filesize = stream.filesize
             with open(filename, 'wb') as f:
                 is_paused = is_cancelled = False
@@ -66,12 +68,10 @@ def download_media(url,filename,audioOnly=False):
 
 def start_download():
     filename = askdirectory()
-    filename = filename+'/sample.mp4'
     threading.Thread(target=download_media, args=(url_entry.get(),filename), daemon=True).start()
 
 def start_audio_download():
     filename = askdirectory()
-    filename = filename+'/sample.mp3'
     threading.Thread(target=download_media, args=(url_entry.get(),filename,True), daemon=True).start()
 
 
