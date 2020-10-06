@@ -1,4 +1,5 @@
 import threading
+import tkinter as tk
 from tkinter.filedialog import *
 from pytube import YouTube, request
 
@@ -28,6 +29,7 @@ def download_media(url,filename,audioOnly=False):
         download_audio_button['state'] = 'disabled'
         pause_button['state'] = 'normal'
         cancel_button['state'] = 'normal'
+        var = optMval.get()
         try:
             progress['text'] = 'Connecting ...'
             yt = YouTube(url)
@@ -35,7 +37,7 @@ def download_media(url,filename,audioOnly=False):
                 stream = yt.streams.filter(subtype='mp4',only_audio=True).first()
                 filename = filename + '/' + yt.title + '.mp3'
             else:
-                stream = yt.streams.filter(subtype='mp4').first()
+                stream = yt.streams[res_list_db[var]]
                 filename = filename + '/' + yt.title + '.mp4'
             filesize = stream.filesize
             with open(filename, 'wb') as f:
@@ -65,6 +67,19 @@ def download_media(url,filename,audioOnly=False):
         pause_button['state'] = 'disabled'
         cancel_button['state'] = 'disabled'
 
+def check_quality():
+    yt = YouTube(url_entry.get())
+    counter = 0
+    global res_list_db
+    res_list_db = {}
+    for strm in yt.streams:
+        if strm.mime_type != "audio/webm" and strm.resolution != None:
+            text = str(strm.resolution) + " - " + str(strm.fps) + "fps - " + str(strm.video_codec) 
+            res_list_db[text] = counter
+            menu["menu"].add_command(label=text, command=tk._setit(optMval, text))
+            counter +=1
+    download_button["state"] = "normal"
+    download_audio_button["state"] = "normal"
 
 def start_download():
     filename = askdirectory()
@@ -90,7 +105,11 @@ def cancel_download():
 root = Tk()
 root.title("Youtube Downloader")
 root.iconbitmap("main img/icon.ico")
-root.geometry("500x650")
+root.geometry("500x700")
+
+# OptionsMenu default value
+optMval = StringVar(root)
+optMval.set("-")
 
 # switch toggle:
 btnState = False
@@ -127,6 +146,14 @@ download_img = PhotoImage(file="btnimgs/Download.png")
 download_button = Button(root, image=download_img, command=start_download,borderwidth=0,bg=None)
 download_button.pack(side=TOP, pady=10)
 
+# Check Quality Button
+check_quality_button = Button(root, text="Check Quailty", width=12, command=check_quality, font='verdana', relief='ridge', bd=5, bg='#f5f5f5', fg='black')
+check_quality_button.pack(side=TOP, pady=5)
+
+# OptionsMenu
+menu = OptionMenu(root, optMval, "")
+menu.pack()
+
 # Download Audio Button
 download_audio_img = PhotoImage(file="btnimgs/Download_Audio.png")
 download_audio_button = Button(root, image=download_audio_img,command=start_audio_download,borderwidth=0,bg=None)
@@ -145,5 +172,9 @@ pause_button.pack(side=TOP, pady=10)
 cancel_img = PhotoImage(file="btnimgs/Cancel.png")
 cancel_button = Button(root, image=cancel_img, command=cancel_download, state='disabled',bg=None,borderwidth=0)
 cancel_button.pack(side=TOP, pady=10)
+
+# Set button defaults to 
+download_button['state'] = 'disabled'
+download_audio_button['state'] = 'disabled'
 
 root.mainloop()
