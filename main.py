@@ -93,7 +93,7 @@ def start_audio_download():
 def toggle_download():
     global is_paused
     is_paused = not is_paused
-    pause_button['text'] = 'Resume' if is_paused else 'Pause'
+    pause_button['image'] = resume_img if is_paused else pause_img
 
 
 def cancel_download():
@@ -165,6 +165,7 @@ progress.pack(side=TOP)
 
 # Pause Button
 pause_img = PhotoImage(file="btnimgs/Pause.png")
+resume_img = PhotoImage(file="btnimgs/Resume.png")
 pause_button = Button(root, image=pause_img, command=toggle_download, state='disabled',bg=None,borderwidth=0)
 pause_button.pack(side=TOP, pady=10)
 
